@@ -16,35 +16,35 @@ class SimulationState:
         self.population = []
         self.land = {(x, y):Tile() for x in range(map_width) for y in range(map_height)}
 
-    def getPossibleActions():
+    def getPossibleActions(self):
         # Return all of the unimproved tiles
         pass
 
-    def update(coord, improvement):
+    def update(self, coord, improvement):
         # AI chooses its move
         # Random Event possible,
         # Turn counter incremented
         pass
 
-    def nextGameState(position, improvement):
+    def nextGameState(self, position, improvement):
         
         pass
 
-    def stillAlive():
+    def stillAlive(self):
         pass
 
     # Getters
 
-    def getIncome():
+    def getIncome(self):
         return self.income
 
-    def getFood():
+    def getFood(self):
         return self.food
 
-    def getPopulation():
+    def getPopulation(self):
         return self.population
 
-    def getLand():
+    def getLand(self):
         return self.land
 
     

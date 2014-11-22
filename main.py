@@ -9,9 +9,9 @@ def main():
 	agent = ReflexAgent()
 
 	while True:
-		move = agent.getMove(simulationState)
+		tile, upgrade = agent.getMove(simulationState)
 
-		simulationState.update(move)
+		simulationState.update(tile, upgrade)
 
 		break # tmp
 

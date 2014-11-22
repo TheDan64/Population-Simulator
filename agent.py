@@ -3,5 +3,5 @@ import testsimulation
 
 class ReflexAgent:
     def getMove(self, simState):
-    	pass
+    	return (None, None) # tmp
 
