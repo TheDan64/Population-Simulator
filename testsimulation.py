@@ -14,7 +14,7 @@ class SimulationState:
         self.income = 0
         self.food = 0
         self.population = []
-        self.land = {t:Tile() for t in zip(range(map_width), range(map_height))}
+        self.land = {(x, y):Tile() for x in range(map_width) for y in range(map_height)}
 
     def getPossibleActions():
         # Return all of the unimproved tiles
