@@ -1,14 +1,20 @@
 import shared
+import random
+
+map_width = 5
+map_height = 5
 
 class Tile:
-    pass
+    def __init__(self):
+        tileType = random.choice([t for t in shared.tileType])
+        tileState = None
 
 class SimulationState:
     def __init__(self):
         self.income = 0
         self.food = 0
         self.population = []
-        self.land = []
+        self.land = {t:Tile() for t in zip(range(map_width), range(map_height))}
 
     def getPossibleActions():
         # Return all of the unimproved tiles
