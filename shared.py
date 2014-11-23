@@ -1,4 +1,15 @@
-from enum import Enum
+try:
+	from enum import Enum
+except:
+	import sys
+
+	print("""You do not seem to have enums available.
+Enums require either Python 3.4 or
+https://pypi.python.org/pypi/enum34 backport installed
+manually or via pip.
+	- Dan""")
+
+	sys.exit()
 
 # What the tile can become
 class tileType(Enum):
