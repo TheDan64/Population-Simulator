@@ -5,36 +5,38 @@ map_width = 5
 map_height = 5
 
 class Tile:
-    def __init__(self):
-        tileType = random.choice([t for t in shared.tileType])
-        tileState = None
+    def __init__(self, position):
+        self.tileType = random.choice([t for t in shared.tileType])
+        self.tileState = None
+        self.productionRate = random.randint(1, 3)
+        self.position = position
 
 class SimulationState:
     def __init__(self):
         self.income = 0
         self.food = 0
         self.population = []
-        self.land = {(x, y):Tile() for x in range(map_width) for y in range(map_height)}
+        self.land = {(x, y):Tile((x,y)) for x in range(map_width) for y in range(map_height)}
 
     def getPossibleActions(self):
         # Return all of the unimproved tiles
-        pass
+        return [tile for key, tile in self.land.items() if tile.tileState is None]
 
-    def update(self, coord, improvement):
+    def update(self, tile, improvement):
         # AI chooses its move
-        # Random Event possible,
-        # Turn counter incremented
-        pass
+        self.land[tile.position] = improvement
 
-    def nextGameState(self, position, improvement):
-        
+        # Random Event possible
+
+        # Turn counter incremented? Either here or in main loop
+
+    def nextGameState(self, tile, improvement):
         pass
 
     def stillAlive(self):
-        pass
+        return len(self.population) > 0 # and other condition
 
     # Getters
-
     def getIncome(self):
         return self.income
 
