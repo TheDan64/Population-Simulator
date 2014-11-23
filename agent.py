@@ -16,7 +16,9 @@ class ReflexAgent:
         # Returns the selected tile and improvement type
         tiles = simState.getPossibleActions()
 
+        bestTile, improvement = None, None
+
         for tile in tiles:
             pass
 
-        return (None, None) # tmp
+        return bestTile, improvement

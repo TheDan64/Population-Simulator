@@ -6,8 +6,8 @@ map_height = 5
 
 class Tile:
     def __init__(self, position):
-        self.tileType = random.choice([t for t in shared.tileType])
-        self.tileState = None
+        self.type = random.choice([t for t in shared.tileType])
+        self.state = None
         self.productionRate = random.randint(1, 3)
         self.position = position
 
@@ -24,7 +24,11 @@ class SimulationState:
 
     def update(self, tile, improvement):
         # AI chooses its move
-        self.land[tile.position] = improvement
+        self.land[tile.position].tileState = improvement
+
+        for tile in self.land:
+            if tile.state is not None:
+                self.income += tile.productionRate
 
         # Random Event possible
 
