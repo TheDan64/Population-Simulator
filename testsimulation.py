@@ -8,8 +8,12 @@ class Tile:
     def __init__(self, position):
         self.type = random.choice([t for t in shared.tileType])
         self.state = None
-        self.productionRate = random.randint(1, 3)
         self.position = position
+
+        if shared.tileType == shared.tileType.Baren:
+            self.productionRate = 0
+        else:
+            self.productionRate = random.randint(1, 3)
 
 class SimulationState:
     def __init__(self):
@@ -53,4 +57,6 @@ class SimulationState:
     def getLand(self):
         return self.land
 
+    def getCurrentScore(self):
+        return 0
     
