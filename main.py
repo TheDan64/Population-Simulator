@@ -1,11 +1,14 @@
 #! /usr/bin/env python3
 
 from agent import *
-from testsimulation import *
+from simulation import *
+import logging
 import random
 import sys
 
 def main():
+    
+    logging.basicConfig(format='%(levelname)s  %(message)s', level=logging.DEBUG)
     turn = 0
 
     # Generate a randomized starting simulation
@@ -24,7 +27,7 @@ def main():
         # Ignore AI, just step manually with no improvements for now
         # tile, upgrade = agent.getAction(simulationState)
         # simulationState.update(tile, upgrade)
-        input("On turn " + str(turn) + " Press Enter to continue...")
+        input("\nOn turn " + str(turn) + " Press Enter to continue...")
         turn = turn + 1
         simulationState.update(None, None)
 

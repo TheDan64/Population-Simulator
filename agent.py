@@ -1,5 +1,5 @@
 import shared
-import testsimulation
+import simulation
 
 class ReflexAgent:
     # Need to add a memory of previous actions and results
