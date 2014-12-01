@@ -1,37 +1,79 @@
 from shared import *
 import testsimulation
 
-class ReflexAgent:
-    # Possibly: Add a memory of previous actions and results
-    # to affect outcome
-    def evalFoodNeed(self, simState):
-        # Determines how well the city is doing for food
-        pass
+# Remembers previous actions and results (including random events)
+class Memory:
+    def __init__(self):
+        # A queue to associate your previous action with the current
+        # (resulting) score
+        self.queue = [] 
 
-    def evalIncomeNeed(self, simState):
-        # Determines how well the city is doing for income
-        pass
+        # Associate current score, tile type, and improvement to future score
+        # (score, tile type, improvement) : score
+        self.memories = {} 
+
+    # Add the memory of what you did
+    def add(self, score, tileType, improvement):
+        self.queue.append((score, tileType, improvement))
+
+    # Update the memory of what you did to the resulting turn's score
+    def update(self, newScore):
+        if len(self.queue) > 0:
+            score, tileType, improvement = self.queue.pop(0)
+
+            self.memories[(score, tileType, improvement)] = newScore
+
+    # Find out the resulting score from memory
+    def check(self, score, tileType, improvement):
+        # Return the memory if it exists
+        try:
+            return self.memories[(score, tileType, improvement)]
+
+        # If the memory doesn't exist, return a bad value
+        except:
+            return -float("inf")
+
+class ReflexAgent:
+    def __init__(self):
+        # Remembers previous actions and situations to improve its own
+        self.memory = Memory()
 
     def getAction(self, simState):
+        self.memory.update(simState.getCurrentScore())
+
         # Returns the selected tile and improvement type
         tiles = simState.getPossibleActions()
 
-        bestTile, improvement, rate = None, None, 0
+        bestTile, improvement, score = None, None, 0
 
-        # Basic AI, picks the most productive tile
-        # ToDo: picks based on current population and income
-        # ToDo: check next game state to see how it is influenced
+        # Reflex AI, picks the most productive tile
+        # based on how the next state will be (not inc random events)
+
         for tile in tiles:
-            if tile.productionRate > rate:
-                bestTile, rate = tile, tile.productionRate
+            improvements = []
 
-                # Baren tiles will never be picked,
-                # so theres no need to check for them
-                if tile.type == tileType.Both:
-                    improvement = random.choice([tileState.Farm, tileState.Mine])
-                elif tile.type == tileType.Farmable:
-                    improvement = tileState.Farm
-                elif tile.type == tileType.Mineable:
-                    improvement = tileState.Mine
+            # Make a list of possible improvements relative to the current tile
+            if tile.type == tileType.Both:
+                improvements = [tileState.Farm, tileState.Mine]
+            elif tile.type == tileType.Farmable:
+                improvements = [tileState.Farm]
+            elif tile.type == tileType.Mineable:
+                improvements = [tileState.Mine]           
+
+            # Find the improvement that yields the greatest score            
+            for i in improvements:
+                nextState = simState.nextGameState(tile, i)
+
+                # Check the next state that would be produced
+                if nextState.getCurrentScore() > score or \
+                    self.memory.check(simState.getCurrentScore(), tile.type, i) > score:
+                    
+                    bestTile, improvement = tile, i
+
+                    score = nextState.getCurrentScore()
+
+        type_ = bestTile.type if bestTile is not None else None
+
+        self.memory.add(simState.getCurrentScore(), type_, improvement)
 
         return bestTile, improvement
