@@ -1,11 +1,8 @@
-# TODO: Set a flag for being a 'nextGameState' that is checked in update() so random events dont apply
-# TODO: Tweak foodHistory rewards and Person.isDead() dice roll
-# TODO: Add random events
-
 import shared
 import random
 import logging
 import copy
+import RandomEvent
 
 #### Game Defines ####
 map_width = 5
@@ -51,8 +48,13 @@ class SimulationState:
         self.foodHistory = []
         self.population = [Person() for x in range(startingPop)]
         self.land = {(x, y):Tile((x,y)) for x in range(map_width) for y in range(map_height)}
-        #simFlag is a flag for avoiding random event rolls durning a call to nextGameState() -- 0 = real state 1 = simulation state
+        # simFlag is a flag for avoiding random event rolls durning a call to nextGameState() -- 0 = real state 1 = simulation state
         self.simFlag = 0
+        self.turn = 0
+        # productionFlatBuff, foodFlatBuff, productionRateBuff, foodRateBuff 
+        self.statusEffects = [0,0,1,1]
+        self.randomEvent = RandomEvent.RandomEvent(self)
+        self.randomEvent.addEvents()
 
     def getPossibleActions(self):
         # Return all of the unimproved tiles
@@ -65,21 +67,32 @@ class SimulationState:
         self.foodHistory.append(self.food - len(self.population))
 
     def calculateOutput(self):
+        
         # Calculate profit and food this turn
         for pos, iterTile in self.land.items():
             if iterTile.state is shared.tileState.Mine:
                 self.income += iterTile.productionRate
-                logger.info("[Income - Value] this turn: " + str(self.income))
             if iterTile.state is shared.tileState.Farm:
                 self.food += iterTile.productionRate
-                logger.info("[Food - Value] this turn: " + str(self.food))
+
+        if self.simFlag == 0:
+            logging.debug("[Random Events - Real State] In the real state, updating with status effects.")
+            self.income = (self.income + self.statusEffects[0]) * self.statusEffects[2]
+            self.food = (self.food + self.statusEffects[1]) * self.statusEffects[3]
+        else:
+            logging.debug("[Random Events - Simulation State] In a simulation state, status effects do not apply.")
+
+        logging.info("[Income - Value] this turn: " + str(self.income))
+        logging.info("[Food - Value] this turn: " + str(self.food))
 
     def update(self, tile, improvement):
+        self.calcOutputFag = 0
         # AI chooses its move
         if tile is not None and improvement is not None:
             self.land[tile.position].state = improvement
 
-        self.calculateOutput()
+        self.randomEvent.rollRandomEvent()
+        self.randomEvent.playEvents()
 
         # Roll age-weighted dice to calculate remaning population
         for person in self.population:
@@ -87,14 +100,15 @@ class SimulationState:
             if person.isDead():
                 if person in self.population: self.population.remove(person)
 
+        self.calculateOutput()
+
         # Calculate food history now that population has settled this turn
         self.calculateFoodHistory()
 
         # Reward continual food surplus with a 'birth', and continual deficit with a 'starvation'
-        logging.debug("[Food - Value] this turn: " + str(self.food))
-        logging.debug("[Population - Value] this turn: " + str(len(self.population))) 
         logging.debug("[Food - Net] this turn: " + str(self.food - len(self.population))) 
         logging.debug("[Food History - Value] this turn is: " + str(self.getFoodHistory()))
+        logging.debug("[Population - Value] this turn: " + str(len(self.population))) 
         if self.getFoodHistory() > 10:
             self.population.append(Person())
             logging.info("[Population - Birth] Due to foodHistory > 10")
@@ -102,19 +116,15 @@ class SimulationState:
             self.population.pop(random.randrange(len(self.population)))
             logging.info("[Population - Death] Due to foodHistory < -5")
 
-        # Random Event possible
-
-        # Turn counter incremented? Either here or in main loop
+        self.turn += 1
 
     def nextGameState(self, tile, improvement):
         # TODO: Set a flag for being a 'nextGameState' that is checked in update() so random events dont apply
         nextState = copy.deepcopy(self)
         nextState.simFlag = 1
-        nextState.land[tile.position].state = improvement
+        nextState.update()
         return nextState 
         # Testing
-        # print("Call to nextGameState() updated tile: " + str(tile.position)  + " with improvement " + str(improvement))
-        # print("Corresponding state at: " + str(self.land[tile.position].position) + " has improvement " + str(self.land[tile.position].state))
 
 
     def stillAlive(self):
