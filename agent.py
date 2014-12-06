@@ -69,7 +69,7 @@ class ReflexAgent:
 
             # Find the improvement that yields the greatest score            
             for i in improvements:
-                nextState = simState.nextGameState(tile, i)
+                nextState = simState.nextSimState(tile, i)
 
                 # Check the next state that would be produced
                 if nextState.getCurrentScore() > score or \
@@ -78,6 +78,12 @@ class ReflexAgent:
                     bestTile, improvement = tile, i
 
                     score = nextState.getCurrentScore()
+
+        # Check if no action is the best action
+        nextState = simState.nextSimState(None, None)
+
+        if nextState.getCurrentScore() > score:
+            bestTile, improvement = None, None
 
         type_ = bestTile.type if bestTile is not None else None
 

@@ -23,9 +23,9 @@ def main():
         tile, improvement = agent.getAction(simulationState)
 
         if tile is None:
-            print("Turn {}: No tile picked".format(turn))
+            print("Turn {:3}: No tile picked".format(turn))
         else:
-            print("Turn {}: Agent upgrades {} by {}".format(turn, tile.state, improvement))
+            print("Turn {:3}: The Govenor creates a new {} for the town.".format(turn, improvement.name))
 
         simulationState.update(tile, improvement)
         turn += 1

@@ -48,7 +48,7 @@ class SimulationState:
 
         # Turn counter incremented? Either here or in main loop
 
-    def nextGameState(self, tile, improvement):
+    def nextSimState(self, tile, improvement):
         state = copy.deepcopy(self)
 
         if tile is not None and improvement is not None:
