@@ -1,5 +1,11 @@
 #! /usr/bin/env python3
 
+"""
+    This file contains the main loop to get the Agent and Environment working
+    together. Also takes care of user input to pause or proceed with the
+    simulation.
+"""
+
 from agent import *
 from testsimulation import *
 

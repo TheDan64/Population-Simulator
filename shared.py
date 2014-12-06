@@ -1,15 +1,16 @@
+"""
+    This file contains base code used mutually between the simulation and agent.
+    Also checks to see if Enums are available when running the simulation.
+"""
+
 try:
     from enum import Enum
 except:
     import sys
 
-    print("""You do not seem to have enums available.
-Enums require either Python 3.4 or
-https://pypi.python.org/pypi/enum34 backport installed
-manually or via pip.
-    - Dan""")
-
-    sys.exit()
+    raise Exception("You do not seem to have enums available. Enums require" +
+        " either Python 3.4 or https://pypi.python.org/pypi/enum34 backport " +
+        "installed manually or via pip.")
 
 # What the tile can become
 class tileType(Enum):

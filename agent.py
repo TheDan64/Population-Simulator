@@ -1,3 +1,8 @@
+"""
+    This file contains the actual agent implementation. Has a Memory class for
+    keeping track of previously similar actions.
+"""
+
 from shared import *
 import testsimulation
 
@@ -21,6 +26,8 @@ class Memory:
         if len(self.queue) > 0:
             score, tileType, improvement = self.queue.pop(0)
 
+            # ToDo: if self.memories[...] already exists, update it with the
+            # average of the two?
             self.memories[(score, tileType, improvement)] = newScore
 
     # Find out the resulting score from memory

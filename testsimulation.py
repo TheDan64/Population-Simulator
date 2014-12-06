@@ -1,3 +1,9 @@
+"""
+    This file contains a test SimulationState and Tile information.
+    It was used as a sample for Dan to test the AI with various
+    configurations.
+"""
+
 import shared
 import random
 import copy
