@@ -66,7 +66,6 @@ class SimulationState:
         self.foodHistory.append(self.food - len(self.population))
 
     def calculateOutput(self):
-        
         # Calculate profit and food this turn
         for pos, iterTile in self.land.items():
             if iterTile.state is shared.tileState.Mine:
@@ -133,9 +132,17 @@ class SimulationState:
     def getCurrentScore(self):
         if len(self.population) ==  0:
             return 0
-        # return self.income * .1 + len(self.population) * (self.getFoodHistory()) #Worst?
-        return self.income / (len(self.population)*(self.getFoodHistory())) #Best?
-        # return self.income / len(self.population)
+        
+        # The heuristic that conbines elements of the other two
+        if shared.heuristic == 1:
+            return self.income / (len(self.population)*(self.getFoodHistory())) #Best?
+
+        # Our 2nd idea heuristic
+        elif shared.heuristic == 2:
+            return self.income / len(self.population)
+
+        # Our original heuristic
+        return self.income * .1 + len(self.population) * (self.getFoodHistory()) #Worst?
 
 
     def getIncome(self):

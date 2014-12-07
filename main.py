@@ -8,25 +8,37 @@
 
 from agent import *
 from simulation import *
+import argparse
+
+parser = argparse.ArgumentParser(description="A population simulation")
+parser.add_argument("--width", type=int, default=5, help="Width of the simulation grid (default: 5)")
+parser.add_argument("--height", type=int, default=5, help="Height of the simulation grid (default: 5)")
+parser.add_argument("--population", type=int, default=10, help="Starting population of the town (default: 10)")
+parser.add_argument("--turns", type=int, default=25, help="Maximum number of turns (default: 25)")
+parser.add_argument("--heuristic", type=int, default=1, help="Which heuristic to use 1 - 3 (default: 1)")
+
+args = parser.parse_args()
+
+shared.heuristic = args.heuristic
 
 def printStatistics(simState):
     print("""Town Statistics
     Population:  {}
     Food:        {}
     Income:      {}
-    Total Score: {}\
+    Total:       {}\
 """.format(len(simState.getPopulation()), simState.getFood(),
-    simState.getIncome(), simState.getCurrentScore()))
+    simState.getIncome(), simState.getFood() + len(simState.getPopulation()) +
+    simState.getIncome()))
 
 def main():
     # Generate a randomized starting simulation
-    simState = SimulationState(5, 5, 100, 100)
+    simState = SimulationState(args.width, args.height, 100, args.population)
     agent = ReflexAgent()
     skipInputTurns = 0
 
     # End when theres no moves left or population is dead
-    while simState.stillAlive() and simState.getTurn() <= 25:
-
+    while simState.stillAlive() and simState.getTurn() <= args.turns:
         if not skipInputTurns:
             # Get player input if skipInputTurns == 0
             inp = input("Press a command followed by enter: ")
@@ -45,12 +57,18 @@ def main():
         if tile is None:
             print("Turn {:3}: The Govenor does nothing this turn.".format(simState.getTurn()))
         else:
-            print("Turn {:3}: The Govenor creates a new {} for the town.".format(simState.getTurn(), improvement.name))
+            text = "\033[92mFarm\033[0m"
+
+            if improvement.name == "Mine":
+                text = "\033[31;40mMine\033[0m"
+
+            print("Turn {:3}: The Govenor creates a new {} for the town.".format(simState.getTurn(), text))
 
         simState.update(tile, improvement)
 
         if skipInputTurns > 0:
             skipInputTurns -= 1
+
     printStatistics(simState)
 
 # Call main fn when running this script (as opposed to importing it)

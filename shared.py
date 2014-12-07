@@ -15,6 +15,8 @@ except:
         " either Python 3.4 or https://pypi.python.org/pypi/enum34 backport " +
         "installed manually or via pip.")
 
+heuristic = 1
+
 # What the tile can become
 class tileType(Enum):
     Farmable = 1
