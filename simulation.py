@@ -4,12 +4,6 @@ import logging
 import copy
 import RandomEvent
 
-#### Game Defines ####
-map_width = 5
-map_height = 5
-maxAge = 100
-startingPop = 10
-
 class Tile:
     def __init__(self, position):
         self.type = random.choice([t for t in shared.tileType])
@@ -42,12 +36,16 @@ class Person:
         return False
 
 class SimulationState:
-    def __init__(self):
+    def __init__(self, map_width, map_height, maxAge, startingPop):
+        self.map_width = map_width
+        self.map_height = map_height
+        self.maxAge = maxAge
+        self.startingPop = startingPop
         self.income = 0
         self.food = startingPop + 1
         self.foodHistory = []
-        self.population = [Person() for x in range(startingPop)]
-        self.land = {(x, y):Tile((x,y)) for x in range(map_width) for y in range(map_height)}
+        self.population = [Person() for x in range(self.startingPop)]
+        self.land = {(x, y):Tile((x,y)) for x in range(self.map_width) for y in range(self.map_height)}
         # simFlag is a flag for avoiding random event rolls durning a call to nextGameState() -- 0 = real state 1 = simulation state
         self.simFlag = 0
         self.turn = 0
@@ -128,6 +126,7 @@ class SimulationState:
 
 
     def stillAlive(self):
+        # This was a triumph
         return len(self.population) > 0 # and other condition
 
     # Getters
@@ -150,3 +149,5 @@ class SimulationState:
     def getFoodHistory(self):
         return sum(self.foodHistory)
     
+    def getTurns(self):
+        return self.turns
