@@ -26,9 +26,13 @@ class Event:
 class RandomEvent:
     def __init__(self, simState):
         self.simState = simState
-        self.eventList = []
         self.activeEventList = []
-        self.statusEffects = [0,0,1,1]
+        self.eventList = []
+        self.randomEvents = [
+
+        ["plague on", "plague off", 1, lambda: self.addFoodFlatBuff(100), lambda: self.addFoodFlatBuff(-100)]
+
+        ]
 
     def addProductionFlatBuff(self, buff):
         self.simState.statusEffects[0] += buff
@@ -43,16 +47,18 @@ class RandomEvent:
         self.simState.statusEffects[3] += buff
 
     def addEvents(self):
-        plague = Event("plague on", "plague off", 1, lambda: self.addFoodFlatBuff(100), lambda: self.addFoodFlatBuff(-100))
-        self.eventList.append(plague)
+        for event in self.randomEvents:
+            message, messageOver, eventLength, effect, inverseEffect = event
+            temp = Event(message, messageOver, eventLength, effect, inverseEffect)
+            self.eventList.append(temp)
 
     def rollRandomEvent(self):
         allowedEvents = []
         for x in self.eventList:
             if x in self.activeEventList: continue
             else: allowedEvents.append(x) 
-        
         # if random.random() < .5 and allowedEvents:
+        
         if len(allowedEvents) >  0:
             self.activeEventList.append(random.choice(allowedEvents))
             logging.debug("[Random Event - Fired]")

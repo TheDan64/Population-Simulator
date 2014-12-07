@@ -133,7 +133,7 @@ class SimulationState:
     # Getters
     
     def getCurrentScore(self):
-        return self.income + self.population
+        return self.income + len(self.population)   
 
     def getIncome(self):
         return self.income
