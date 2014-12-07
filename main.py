@@ -7,7 +7,7 @@
 """
 
 from agent import *
-from testsimulation import *
+from simulation import *
 
 def printStatistics(simState):
     print("""Town Statistics
@@ -22,16 +22,17 @@ def main():
     # Generate a randomized starting simulation
     simState = SimulationState()
     agent = ReflexAgent()
+    turn = 1
 
     # End when theres no moves left for now
-    while simState.stillAlive() and simState.getTurn() <= 25:
+    while simState.stillAlive() and turn <= 25:
 
         tile, improvement = agent.getAction(simState)
 
         if tile is None:
-            print("Turn {:3}: The Govenor does nothing this turn.".format(simState.getTurn()))
+            print("Turn {:3}: The Govenor does nothing this turn.".format(turn))
         else:
-            print("Turn {:3}: The Govenor creates a new {} for the town.".format(simState.getTurn(), improvement.name))
+            print("Turn {:3}: The Govenor creates a new {} for the town.".format(turn, improvement.name))
 
         simState.update(tile, improvement)
 
