@@ -75,7 +75,7 @@ class SimulationState:
             if iterTile.state is shared.tileState.Farm:
                 self.food += iterTile.productionRate
 
-        if self.simFlag == 0:
+        if not self.simFlag:
             logging.debug("[Random Events - Real State] In the real state, updating with status effects.")
             self.income = (self.income + self.statusEffects[0]) * self.statusEffects[2]
             self.food = (self.food + self.statusEffects[1]) * self.statusEffects[3]
@@ -86,13 +86,13 @@ class SimulationState:
         logging.info("[Food - Value] this turn: " + str(self.food))
 
     def update(self, tile, improvement):
-        self.calcOutputFag = 0
         # AI chooses its move
         if tile is not None and improvement is not None:
             self.land[tile.position].state = improvement
 
-        self.randomEvent.rollRandomEvent()
-        self.randomEvent.playEvents()
+        if not self.simFlag:     
+            self.randomEvent.rollRandomEvent()
+            self.randomEvent.playEvents()
 
         # Roll age-weighted dice to calculate remaning population
         for person in self.population:
@@ -122,7 +122,7 @@ class SimulationState:
         # TODO: Set a flag for being a 'nextGameState' that is checked in update() so random events dont apply
         nextState = copy.deepcopy(self)
         nextState.simFlag = 1
-        nextState.update()
+        nextState.update(tile, improvement)
         return nextState 
         # Testing
 
