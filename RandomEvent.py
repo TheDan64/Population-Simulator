@@ -67,9 +67,14 @@ class RandomEvent:
 
         [
         "The town has been smitten! And upon their ponds, and upon all their pools of water, that they may become blood; and that there may be blood throughout all the land! - A farm has gone barren!",
-        None, 1, lambda: self.tileTo(shared.tileState.Farm, shared.TileType.Barren)
+        None, 1, lambda: self.tileTo(shared.tileState.Farm, shared.tileType.Baren), lambda: None
+        ],
+
+        [
+        "Experimental crop research has produced excelent results in a farm! - A farm's production rate has trippled!",
+        "The experimental crops have died :(", 5, lambda: self.addFoodRateBuff(.5), lambda: self.addFoodRateBuff(-.5)
         ]
-        
+
         ]
 
     def addProductionFlatBuff(self, buff):
@@ -90,9 +95,10 @@ class RandomEvent:
         for pos, iterTile in self.simState.land.items(): 
             if iterTile.state is tileType:
                 tileList.append(iterTile)
-        choice = random.choice(tileList).tile
-        choice.state = none
-        choice.type = destState
+        if tileList:
+            choice = random.choice(tileList)
+            choice.state = None
+            choice.type = destState
 
     def rateChange(self, tileType, rate):
         # tileType = shared.tileState.Farm or shared.tileState.Mine
@@ -101,9 +107,10 @@ class RandomEvent:
         for pos, iterTile in self.simState.land.items(): 
             if iterTile.state is tileType:
                 tileList.append(iterTile)
-        choice = random.choice(tileList).tile 
-        choice.productionRate *= rate
-        choice.productionRate  = math.fabs(choice.productionRate)
+        if tileList:
+            choice = random.choice(tileList).tile 
+            choice.productionRate *= rate
+            choice.productionRate  = math.fabs(choice.productionRate)
 
     def killPeople(self, numberToKill):
         for x in range(numberToKill):
@@ -127,7 +134,7 @@ class RandomEvent:
         for x in self.eventList:
             if x in self.activeEventList: continue
             else: allowedEvents.append(x) 
-        if random.random() < .05 and len(allowedEvents) > 0: 
+        if random.random() < .5 and len(allowedEvents) > 0: 
             self.activeEventList.append(random.choice(allowedEvents))
             logging.debug("[Random Event - Fired]")
 

@@ -69,9 +69,9 @@ class SimulationState:
         # Calculate profit and food this turn
         for pos, iterTile in self.land.items():
             if iterTile.state is shared.tileState.Mine:
-                self.income += iterTile.productionRate
+                self.income = iterTile.productionRate
             if iterTile.state is shared.tileState.Farm:
-                self.food += iterTile.productionRate
+                self.food = iterTile.productionRate
 
         if not self.simFlag:
             logging.debug("[Random Events - Real State] In the real state, updating with status effects.")
@@ -110,7 +110,7 @@ class SimulationState:
         if self.getFoodHistory() > 10:
             for i in range( math.floor(self.getFoodHistory() % 10) ):
                 self.population.append(Person())
-                logging.info("[Population - Birth] Due to foodHistory > 10")
+                logging.debug("[Population - Birth] Due to foodHistory > 10")
         if self.getFoodHistory() < -5: 
             self.population.pop(random.randrange(len(self.population)))
             logging.info("[Population - Death] Due to foodHistory < -5")

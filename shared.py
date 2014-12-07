@@ -4,7 +4,7 @@
 """
 import logging
 
-logging.basicConfig(format='%(levelname)s  %(message)s', level=logging.CRITICAL)
+logging.basicConfig(format='%(levelname)s  %(message)s', level=logging.INFO)
 
 try:
     from enum import Enum
