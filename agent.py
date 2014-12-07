@@ -15,29 +15,34 @@ class Memory:
 
         # Associate current score, tile type, and improvement to future score
         # (score, tile type, improvement) : score
-        self.memories = {} 
+        self.history = {} 
 
     # Add the memory of what you did
-    def add(self, score, tileType, improvement):
-        self.queue.append((score, tileType, improvement))
+    def add(self, scoreTypeImprovement):
+        self.queue.append(scoreTypeImprovement)
 
     # Update the memory of what you did to the resulting turn's score
     def update(self, newScore):
         if len(self.queue) > 0:
-            score, tileType, improvement = self.queue.pop(0)
+            scoreTypeImprovement = self.queue.pop(0)
 
-            # ToDo: if self.memories[...] already exists, update it with the
-            # average of the two?
-            self.memories[(score, tileType, improvement)] = newScore
+            # If it already exists, average the two memories
+            if scoreTypeImprovement in self.history:
+                self.history[scoreTypeImprovement] += newScore
+                self.history[scoreTypeImprovement] /= 2
+
+            # Otherwise just create a new memory
+            else:
+                self.history[scoreTypeImprovement] = newScore
 
     # Find out the resulting score from memory
-    def check(self, score, tileType, improvement):
+    def check(self, scoreTypeImprovement):
         # Return the memory if it exists
-        try:
-            return self.memories[(score, tileType, improvement)]
+        if scoreTypeImprovement in self.history:
+            return self.history[scoreTypeImprovement]
 
         # If the memory doesn't exist, return a bad value
-        except:
+        else:
             return -float("inf")
 
 class ReflexAgent:
@@ -76,7 +81,7 @@ class ReflexAgent:
 
                 # Check the next state that would be produced
                 if nextState.getCurrentScore() > score or \
-                    self.memory.check(simState.getCurrentScore(), tile.type, i) > score:
+                    self.memory.check((simState.getCurrentScore(), tile.type, i)) > score:
                     
                     bestTile, improvement = tile, i
 
@@ -84,6 +89,6 @@ class ReflexAgent:
 
         type_ = bestTile.type if bestTile is not None else None
 
-        self.memory.add(simState.getCurrentScore(), type_, improvement)
+        self.memory.add((simState.getCurrentScore(), type_, improvement))
 
         return bestTile, improvement

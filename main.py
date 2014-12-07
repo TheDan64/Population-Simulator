@@ -11,10 +11,10 @@ from testsimulation import *
 
 def printStatistics(simState):
     print("""Town Statistics
-\tPopulation:  {}
-\tFood:        {}
-\tIncome:      {}
-\tTotal Score: {}
+    Population:  {}
+    Food:        {}
+    Income:      {}
+    Total Score: {}\
 """.format(len(simState.getPopulation()), simState.getFood(),
     simState.getIncome(), simState.getCurrentScore()))
 
@@ -23,10 +23,8 @@ def main():
     simState = SimulationState()
     agent = ReflexAgent()
 
-    while True:
-        # Break when theres no moves left for now
-        if not simState.stillAlive() or simState.getTurn() == 25:
-            break
+    # End when theres no moves left for now
+    while simState.stillAlive() and simState.getTurn() <= 25:
 
         tile, improvement = agent.getAction(simState)
 
@@ -37,7 +35,7 @@ def main():
 
         simState.update(tile, improvement)
 
-        #printStatistics(simState)
+    printStatistics(simState)
 
 # Call main fn when running this script (as opposed to importing it)
 if __name__ == "__main__":

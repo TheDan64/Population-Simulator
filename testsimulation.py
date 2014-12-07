@@ -28,7 +28,7 @@ class SimulationState:
         self.food = 0
         self.population = range(10)
         self.land = {(x, y):Tile((x,y)) for x in range(map_width) for y in range(map_height)}
-        self.turn = 0
+        self.turn = 1
 
     def getPossibleActions(self):
         # Return all of the unimproved tiles
