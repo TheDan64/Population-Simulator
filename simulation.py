@@ -107,7 +107,7 @@ class SimulationState:
         logging.debug("[Food - Net] this turn: " + str(self.food - len(self.population))) 
         logging.debug("[Food History - Value] this turn is: " + str(self.getFoodHistory()))
         logging.debug("[Population - Value] this turn: " + str(len(self.population))) 
-        if self.getFoodHistory()/10 > 10:
+        if self.getFoodHistory() > 10:
             self.population.append(Person())
             logging.info("[Population - Birth] Due to foodHistory > 10")
         if self.getFoodHistory() < -5: 
@@ -132,9 +132,9 @@ class SimulationState:
     # Getters
     
     def getCurrentScore(self):
-        if len(self.population) = 0:
+        if len(self.population) ==  0:
             return 0
-        return self.income + len(self.population)   
+        return self.income*.1 + len(self.population)*self.getFoodHistory() 
 
     def getIncome(self):
         return self.income
@@ -149,7 +149,7 @@ class SimulationState:
         return self.land
 
     def getFoodHistory(self):
-        return sum(self.foodHistory)
+        return sum(self.foodHistory)/10
     
     def getTurn(self):
         return self.turn
