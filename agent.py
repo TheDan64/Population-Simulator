@@ -58,7 +58,7 @@ class ReflexAgent:
 
         # Initialize and initialize default action to no action
         bestTile, improvement = None, None
-        score = simState.nextSimState(None, None).getCurrentScore()
+        score = simState.nextGameState(None, None).getCurrentScore()
 
         # Reflex AI, picks the most productive tile
         # based on how the next state will be or whether having made
@@ -77,7 +77,7 @@ class ReflexAgent:
 
             # Find the improvement that yields the greatest score            
             for i in improvements:
-                nextState = simState.nextSimState(tile, i)
+                nextState = simState.nextGameState(tile, i)
 
                 # Check the next state that would be produced
                 if nextState.getCurrentScore() > score or \

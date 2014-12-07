@@ -8,6 +8,7 @@
 
 from agent import *
 from simulation import *
+import logging
 
 def printStatistics(simState):
     print("""Town Statistics
@@ -24,8 +25,12 @@ def main():
     agent = ReflexAgent()
     turn = 1
 
-    # End when theres no moves left for now
+    # End when theres no moves left or population is dead
     while simState.stillAlive() and turn <= 25:
+        # Get player input
+#        inp = input("Press a command followed by enter: ")
+        
+#        if int(inp)
 
         tile, improvement = agent.getAction(simState)
 
@@ -35,6 +40,8 @@ def main():
             print("Turn {:3}: The Govenor creates a new {} for the town.".format(turn, improvement.name))
 
         simState.update(tile, improvement)
+
+        turn += 1
 
     printStatistics(simState)
 
