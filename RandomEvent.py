@@ -58,9 +58,8 @@ class RandomEvent:
         for x in self.eventList:
             if x in self.activeEventList: continue
             else: allowedEvents.append(x) 
-        # if random.random() < .5 and allowedEvents:
-        
-        if len(allowedEvents) >  0:
+        if random.random() < .5 and len(allowedEvents) > 0: 
+        # if len(allowedEvents) >  0:
             self.activeEventList.append(random.choice(allowedEvents))
             logging.debug("[Random Event - Fired]")
 
