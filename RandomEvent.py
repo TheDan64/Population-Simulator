@@ -1,5 +1,6 @@
 import random
 import logging
+import shared
 
 class Event:
         def __init__(self, message, messageOver, eventLength, effect, inverseEffect):
@@ -19,7 +20,7 @@ class Event:
             return False
 
         def handleEvent(self):
-            print(self.message)
+            logging.info(self.message)
             self.effect()
             self.counter += 1
 
@@ -68,6 +69,3 @@ class RandomEvent:
             if event.eventOver():
                 if event in self.activeEventList: self.activeEventList.remove(event)
             event.handleEvent()
-
-    def printStatus(self):
-        print(self.statusEffects)

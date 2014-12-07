@@ -2,6 +2,9 @@
     This file contains base code used mutually between the simulation and agent.
     Also checks to see if Enums are available when running the simulation.
 """
+import logging
+
+logging.basicConfig(format='%(levelname)s  %(message)s', level=logging.DEBUG)
 
 try:
     from enum import Enum
