@@ -4,7 +4,7 @@
     configurations.
 """
 
-import shared
+from shared import *
 import random
 import copy
 
@@ -13,11 +13,11 @@ map_height = 5
 
 class Tile:
     def __init__(self, position):
-        self.type = random.choice([t for t in shared.tileType])
+        self.type = random.choice([t for t in tileType])
         self.state = None
         self.position = position
 
-        if shared.tileType == shared.tileType.Baren:
+        if tileType == tileType.Baren:
             self.productionRate = 0
         else:
             self.productionRate = random.randint(1, 3)
@@ -28,6 +28,7 @@ class SimulationState:
         self.food = 0
         self.population = range(10)
         self.land = {(x, y):Tile((x,y)) for x in range(map_width) for y in range(map_height)}
+        self.turn = 0
 
     def getPossibleActions(self):
         # Return all of the unimproved tiles
@@ -39,14 +40,16 @@ class SimulationState:
             self.land[tile.position].state = improvement
 
         for key, tile in self.land.items():
-            if tile.state is not None:
+            if tile.state == tileState.Mine:
                 self.income += tile.productionRate
+            elif tile.state == tileState.Farm:
+                self.food += tile.productionRate
 
         self.income -= 3 # For improvement
 
         # Random Event possible
 
-        # Turn counter incremented? Either here or in main loop
+        self.turn += 1
 
     def nextSimState(self, tile, improvement):
         state = copy.deepcopy(self)
@@ -55,8 +58,10 @@ class SimulationState:
             state.land[tile.position].state = improvement
 
         for key, tile in state.land.items():
-            if tile.state is not None:
+            if tile.state == tileState.Mine:
                 state.income += tile.productionRate
+            elif tile.state == tileState.Farm:
+                state.food += tile.productionRate
 
         state.income -= 3 # For improvement
 
@@ -78,6 +83,10 @@ class SimulationState:
     def getLand(self):
         return self.land
 
+    def getTurn(self):
+        return self.turn
+
     def getCurrentScore(self):
-        return self.income + len(self.population)
+        # This is the score 'heuristic'
+        return self.income + len(self.population) + self.food
     

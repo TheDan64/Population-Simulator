@@ -9,26 +9,35 @@
 from agent import *
 from testsimulation import *
 
+def printStatistics(simState):
+    print("""Town Statistics
+\tPopulation:  {}
+\tFood:        {}
+\tIncome:      {}
+\tTotal Score: {}
+""".format(len(simState.getPopulation()), simState.getFood(),
+    simState.getIncome(), simState.getCurrentScore()))
+
 def main():
     # Generate a randomized starting simulation
-    simulationState = SimulationState()
+    simState = SimulationState()
     agent = ReflexAgent()
-    turn = 0
 
     while True:
         # Break when theres no moves left for now
-        if not simulationState.stillAlive() or turn == 25:
+        if not simState.stillAlive() or simState.getTurn() == 25:
             break
 
-        tile, improvement = agent.getAction(simulationState)
+        tile, improvement = agent.getAction(simState)
 
         if tile is None:
-            print("Turn {:3}: No tile picked".format(turn))
+            print("Turn {:3}: The Govenor does nothing this turn.".format(simState.getTurn()))
         else:
-            print("Turn {:3}: The Govenor creates a new {} for the town.".format(turn, improvement.name))
+            print("Turn {:3}: The Govenor creates a new {} for the town.".format(simState.getTurn(), improvement.name))
 
-        simulationState.update(tile, improvement)
-        turn += 1
+        simState.update(tile, improvement)
+
+        #printStatistics(simState)
 
 # Call main fn when running this script (as opposed to importing it)
 if __name__ == "__main__":

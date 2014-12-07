@@ -51,10 +51,13 @@ class ReflexAgent:
         # Returns the selected tile and improvement type
         tiles = simState.getPossibleActions()
 
-        bestTile, improvement, score = None, None, 0
+        # Initialize and initialize default action to no action
+        bestTile, improvement = None, None
+        score = simState.nextSimState(None, None).getCurrentScore()
 
         # Reflex AI, picks the most productive tile
-        # based on how the next state will be (not inc random events)
+        # based on how the next state will be or whether having made
+        # the same action previously we beneficial
 
         for tile in tiles:
             improvements = []
@@ -78,12 +81,6 @@ class ReflexAgent:
                     bestTile, improvement = tile, i
 
                     score = nextState.getCurrentScore()
-
-        # Check if no action is the best action
-        nextState = simState.nextSimState(None, None)
-
-        if nextState.getCurrentScore() > score:
-            bestTile, improvement = None, None
 
         type_ = bestTile.type if bestTile is not None else None
 
