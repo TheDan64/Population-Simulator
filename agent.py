@@ -76,6 +76,9 @@ class ReflexAgent:
                 improvements = [tileState.Mine]           
 
             # Find the improvement that yields the greatest score            
+
+            logging.basicConfig(format='%(levelname)s  %(message)s', level=logging.CRITICAL)
+
             for i in improvements:
                 nextState = simState.nextGameState(tile, i)
 
@@ -86,6 +89,9 @@ class ReflexAgent:
                     bestTile, improvement = tile, i
 
                     score = nextState.getCurrentScore()
+
+            logging.basicConfig(format='%(levelname)s  %(message)s', level=logging.DEBUG)
+
 
         type_ = bestTile.type if bestTile is not None else None
 
