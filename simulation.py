@@ -2,6 +2,7 @@ import shared
 import random
 import logging
 import copy
+import math
 import RandomEvent
 
 class Tile:
@@ -13,7 +14,7 @@ class Tile:
 
 class Person:
     def __init__(self):
-        self.age = random.randint(1,90)
+        self.age = random.randint(1,35)
 
     def ageByYear(self, year):
         self.age += year
@@ -108,8 +109,9 @@ class SimulationState:
         logging.debug("[Food History - Value] this turn is: " + str(self.getFoodHistory()))
         logging.debug("[Population - Value] this turn: " + str(len(self.population))) 
         if self.getFoodHistory() > 10:
-            self.population.append(Person())
-            logging.info("[Population - Birth] Due to foodHistory > 10")
+            for i in range( math.floor(self.getFoodHistory() % 10) ):
+                self.population.append(Person())
+                logging.info("[Population - Birth] Due to foodHistory > 10")
         if self.getFoodHistory() < -5: 
             self.population.pop(random.randrange(len(self.population)))
             logging.info("[Population - Death] Due to foodHistory < -5")
@@ -117,24 +119,24 @@ class SimulationState:
         self.turn += 1
 
     def nextGameState(self, tile, improvement):
-        # TODO: Set a flag for being a 'nextGameState' that is checked in update() so random events dont apply
         nextState = copy.deepcopy(self)
         nextState.simFlag = 1
         nextState.update(tile, improvement)
         return nextState 
-        # Testing
-
 
     def stillAlive(self):
         # This was a triumph
-        return len(self.population) > 0 # and other condition
+        return len(self.population) > 0 
 
     # Getters
     
     def getCurrentScore(self):
         if len(self.population) ==  0:
             return 0
-        return self.income*.1 + len(self.population)*self.getFoodHistory() 
+        # return self.income * .1 + len(self.population) * (self.getFoodHistory()) #Worst?
+        return self.income / (len(self.population)*(self.getFoodHistory())) #Best?
+        # return self.income / len(self.population)
+
 
     def getIncome(self):
         return self.income
@@ -149,7 +151,10 @@ class SimulationState:
         return self.land
 
     def getFoodHistory(self):
-        return sum(self.foodHistory)/10
+        if len(self.foodHistory) == 0:
+            return 1
+        return sum(self.foodHistory)/(len(self.foodHistory) + 1)
+
     
     def getTurn(self):
         return self.turn

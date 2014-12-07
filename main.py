@@ -20,7 +20,7 @@ def printStatistics(simState):
 
 def main():
     # Generate a randomized starting simulation
-    simState = SimulationState(5, 5, 100, 10)
+    simState = SimulationState(5, 5, 100, 100)
     agent = ReflexAgent()
     skipInputTurns = 0
 
@@ -51,6 +51,7 @@ def main():
 
         if skipInputTurns > 0:
             skipInputTurns -= 1
+    printStatistics(simState)
 
 # Call main fn when running this script (as opposed to importing it)
 if __name__ == "__main__":

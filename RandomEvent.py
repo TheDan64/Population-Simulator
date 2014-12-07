@@ -13,7 +13,7 @@ class Event:
 
         def eventOver(self):
             if self.counter >= self.eventLength:
-                if self.messageOver: print(self.messageOver)
+                if self.messageOver: logging.info(self.messageOver)
                 if self.inverseEffect: self.inverseEffect()
                 logging.debug("[Random Event - Over]")
                 return True
