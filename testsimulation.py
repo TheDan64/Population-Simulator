@@ -51,7 +51,7 @@ class SimulationState:
 
         self.turn += 1
 
-    def nextSimState(self, tile, improvement):
+    def nextGameState(self, tile, improvement):
         state = copy.deepcopy(self)
 
         if tile is not None and improvement is not None:
