@@ -24,13 +24,20 @@ def main():
     simState = SimulationState()
     agent = ReflexAgent()
     turn = 1
+    skipInputTurns = 0
 
     # End when theres no moves left or population is dead
     while simState.stillAlive() and turn <= 25:
-        # Get player input
-#        inp = input("Press a command followed by enter: ")
+
+        if not skipInputTurns:
+            # Get player input if skipInputTurns == 0
+            inp = input("Press a command followed by enter: ")
         
-#        if int(inp)
+            # If an integer, proceed for int # of terms
+            try:
+                skipInputTurns = int(inp)
+            except ValueError:
+                pass
 
         tile, improvement = agent.getAction(simState)
 
@@ -42,6 +49,9 @@ def main():
         simState.update(tile, improvement)
 
         turn += 1
+        
+        if skipInputTurns > 0:
+            skipInputTurns -= 1
 
     printStatistics(simState)
 
