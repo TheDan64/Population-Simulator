@@ -8,7 +8,6 @@
 
 from agent import *
 from simulation import *
-import logging
 
 def printStatistics(simState):
     print("""Town Statistics
@@ -21,13 +20,12 @@ def printStatistics(simState):
 
 def main():
     # Generate a randomized starting simulation
-    simState = SimulationState()
+    simState = SimulationState(5, 5, 100, 10)
     agent = ReflexAgent()
-    turn = 1
     skipInputTurns = 0
 
     # End when theres no moves left or population is dead
-    while simState.stillAlive() and turn <= 25:
+    while simState.stillAlive() and simState.getTurn() <= 25:
 
         if not skipInputTurns:
             # Get player input if skipInputTurns == 0
@@ -37,23 +35,22 @@ def main():
             try:
                 skipInputTurns = int(inp)
             except ValueError:
-                pass
+                if inp == 'e':
+                    exit()
+                elif inp == 'p':
+                    printStatistics(simState)
 
         tile, improvement = agent.getAction(simState)
 
         if tile is None:
-            print("Turn {:3}: The Govenor does nothing this turn.".format(turn))
+            print("Turn {:3}: The Govenor does nothing this turn.".format(simState.getTurn()))
         else:
-            print("Turn {:3}: The Govenor creates a new {} for the town.".format(turn, improvement.name))
+            print("Turn {:3}: The Govenor creates a new {} for the town.".format(simState.getTurn(), improvement.name))
 
         simState.update(tile, improvement)
 
-        turn += 1
-        
         if skipInputTurns > 0:
             skipInputTurns -= 1
-
-    printStatistics(simState)
 
 # Call main fn when running this script (as opposed to importing it)
 if __name__ == "__main__":

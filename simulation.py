@@ -149,5 +149,5 @@ class SimulationState:
     def getFoodHistory(self):
         return sum(self.foodHistory)
     
-    def getTurns(self):
-        return self.turns
+    def getTurn(self):
+        return self.turn
