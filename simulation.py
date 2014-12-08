@@ -160,7 +160,7 @@ class SimulationState:
     def getFoodHistory(self):
         if len(self.foodHistory) == 0:
             return 1
-        if sum(self.foodHistory)/(len(self.foodHistory) + 1) == 0
+        if sum(self.foodHistory)/(len(self.foodHistory) + 1) == 0:
             return 1
         return sum(self.foodHistory)/(len(self.foodHistory) + 1)
 
