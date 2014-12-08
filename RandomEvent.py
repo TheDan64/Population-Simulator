@@ -2,29 +2,6 @@ import random
 import logging
 import shared
 import simulation
-"""
-Frogs                                 - random farm goes to Both
-Mining company Bankrupt - random mine goes Both
-
-Water to blood                    - random farm goes Baren
-Experimental fields             - random farm production rate * 3  
-
-Mine collapse                      - random Mine goes Barren
-Strike Gold                        - random Mine production rate * 3
-
-Darkness                          - Food multiplier to 0
-Long summer                    - Food multiplier to 1.5
-    
-Death of the Firstborn      - 5 people die
-Baby Boomers                  - 5 people born
-        
-Livestock Diseased          - Flat food loss (20)
-Victory Gardens               - Flat food buff (20) 
-
-Locusts                            - Food history set to 0
-"""
-
-
 
 class Event:
         def __init__(self, message, messageOver, eventLength, effect, inverseEffect):
