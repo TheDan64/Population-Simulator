@@ -56,7 +56,7 @@ class RandomEvent:
         ],
 
         [
-        "\nA mine has collapsed! - A random mine has gone baron\n",
+        "\nA mine has collapsed! - A random mine has gone barren\n",
         None, 1, lambda: self.tileTo(shared.tileState.Mine, shared.tileType.Baren), lambda: None
         ],
 
@@ -127,7 +127,7 @@ class RandomEvent:
         # print("++allowedEvents+++", [i.message for i in allowedEvents])
         # print("++eventList+++", [i.message for i in self.eventList])
         # print("++activeEventList+++", [i self.activeEventList )
-        if random.random() < .25 and len(allowedEvents) > 0: 
+        if random.random() < .15 and len(allowedEvents) > 0: 
             self.activeEventList.append(random.choice(allowedEvents))
             logging.debug("[Random Event - Fired]")
 
