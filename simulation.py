@@ -54,6 +54,8 @@ class SimulationState:
         self.statusEffects = [0,0,1,1]
         self.randomEvent = RandomEvent.RandomEvent(self)
         self.randomEvent.addEvents()
+        self.incomeThisTurn = 0
+        self.foodThisTurn = 0
 
     def getPossibleActions(self):
         # Return all of the unimproved tiles
@@ -67,18 +69,23 @@ class SimulationState:
 
     def calculateOutput(self):
         # Calculate profit and food this turn
+        self.incomeThisTurn = 0
+        self.foodThisTurn = 0
+
         for pos, iterTile in self.land.items():
             if iterTile.state is shared.tileState.Mine:
-                self.income = iterTile.productionRate
+                self.incomeThisTurn += iterTile.productionRate
             if iterTile.state is shared.tileState.Farm:
-                self.food = iterTile.productionRate
+                self.foodThisTurn += iterTile.productionRate
 
         if not self.simFlag:
             logging.debug("[Random Events - Real State] In the real state, updating with status effects.")
-            self.income = (self.income + self.statusEffects[0]) * self.statusEffects[2]
-            self.food = (self.food + self.statusEffects[1]) * self.statusEffects[3]
+            self.income += (self.incomeThisTurn + self.statusEffects[0]) * self.statusEffects[2]
+            self.food += (self.foodThisTurn + self.statusEffects[1]) * self.statusEffects[3]
         else:
             logging.debug("[Random Events - Simulation State] In a simulation state, status effects do not apply.")
+            self.income += self.incomeThisTurn
+            self.food += self.foodThisTurn
 
         logging.info("[Income - Value] this turn: " + str(self.income))
         logging.info("[Food - Value] this turn: " + str(self.food))
