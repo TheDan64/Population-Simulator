@@ -98,3 +98,11 @@ class ReflexAgent:
         self.memory.add((simState.getCurrentScore(), type_, improvement))
 
         return bestTile, improvement
+
+class QLearningAgent(ReflexAgent):
+    def __init__(self):
+        pass
+
+    def getAction(self, simState):
+        ReflexAgent.getAction(simState)
+

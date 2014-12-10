@@ -37,7 +37,7 @@ class Person:
         return False
 
 class SimulationState:
-    def __init__(self, map_width, map_height, maxAge, startingPop):
+    def __init__(self, map_width, map_height, maxAge, startingPop, quiet):
         self.map_width = map_width
         self.map_height = map_height
         self.maxAge = maxAge
@@ -50,7 +50,7 @@ class SimulationState:
         # simFlag is a flag for avoiding random event rolls durning a call to nextGameState() -- 0 = real state 1 = simulation state
         self.simFlag = 0
         self.turn = 0
-        self.quiet = 0
+        self.quiet = quiet
         # productionFlatBuff, foodFlatBuff, productionRateBuff, foodRateBuff 
         self.statusEffects = [0,0,1,1]
         self.randomEvent = RandomEvent.RandomEvent(self)
