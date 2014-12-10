@@ -16,7 +16,6 @@ except:
         "installed manually or via pip.")
 
 heuristic = 1
-quiet = 0
 
 # What the tile can become
 class tileType(Enum):

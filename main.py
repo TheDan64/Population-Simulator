@@ -17,19 +17,29 @@ parser.add_argument("--population", type=int, default=10, help="Starting populat
 parser.add_argument("--turns", type=int, default=25, help="Maximum number of turns (default: 25)")
 parser.add_argument("--heuristic", type=int, default=1, help="Which heuristic to use 1 - 3 (default: 1)")
 parser.add_argument("--quiet", type=int, default=0, help="Supress run output and run --turns times, outputting an average score over --turns runs")
+parser.add_argument("--file", default="output", help="Output file name (defualt: 'output')")
+
 
 
 args = parser.parse_args()
 
 shared.heuristic = args.heuristic
 
-def printStatistics(population, food, income, total):
-    print("""Town Statistics
-    Population:  {}
-    Food:        {}
-    Income:      {}
-    Total:       {}\
-""".format(population, food, income, total))
+def printStatistics(population, food, income, total, f='f'):
+    if args.quiet:
+        f.write("""Town Statistics
+        Population:  {}
+        Food:        {}
+        Income:      {}
+        Total:       {}\n
+    """.format(population, food, income, total))
+    else:
+        print("""Town Statistics
+        Population:  {}
+        Food:        {}
+        Income:      {}
+        Total:       {}\
+    """.format(population, food, income, total))
 
 def main():
     # Generate a randomized starting simulation
@@ -40,9 +50,10 @@ def main():
         totalIncome = 0
         totalScore = 0
 
-        shared.quiet = 0
+        f = open(args.file, 'w+')
+        f.write("stuff")
         for x in range(args.turns):
-            print("Running heuristic " + str(heuristic) + " on iteration " + str(x))
+            f.write("Running heuristic " + str(heuristic) + " on iteration " + str(x) + "\n")
             simState = SimulationState(args.width, args.height, 100, args.population)
             simState.quiet = 1
             agent = ReflexAgent()
@@ -53,7 +64,8 @@ def main():
             totalFood += simState.getFood()
             totalIncome += simState.getIncome()
             totalScore += simState.getFood() + len(simState.getPopulation()) + simState.getIncome()
-        printStatistics(totalPop/args.turns, totalFood/args.turns, totalIncome/args.turns, totalScore/args.turns)
+        printStatistics(totalPop/args.turns, totalFood/args.turns, totalIncome/args.turns, totalScore/args.turns, f)
+        f.close()
     else:
         simState = SimulationState(args.width, args.height, 100, args.population)
         agent = ReflexAgent()
