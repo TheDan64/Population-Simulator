@@ -51,7 +51,7 @@ def main():
         totalScore = 0
 
         f = open(args.file, 'w+')
-        for x in range(args.turns):
+        for x in range(args.turns+1):
             f.write("Running heuristic " + str(heuristic) + " on iteration " + str(x) + "\n")
             f.flush()
             simState = SimulationState(args.width, args.height, 100, args.population)
