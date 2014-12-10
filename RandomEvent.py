@@ -4,7 +4,7 @@ import shared
 import simulation
 
 class Event:
-        def __init__(self, message, messageOver, eventLength, effect, inverseEffect):
+        def __init__(self, message, messageOver, eventLength, effect, inverseEffect, quiet):
             self.message = message
             self.messageOver = messageOver
             self.eventLength = eventLength
@@ -13,17 +13,17 @@ class Event:
             self.counter = 0
             self.fired = 0
 
-        def eventOver(self):
+        def eventOver(self, quiet):
             if self.counter >= self.eventLength:
-                if self.messageOver: print(self.messageOver)
+                if self.messageOver and not quiet: print(self.messageOver)
                 if self.inverseEffect: self.inverseEffect()
                 logging.debug("[Random Event - Over]")
                 return True
             return False
 
-        def handleEvent(self):
+        def handleEvent(self, quiet):
             if not self.fired:
-                print(self.message)
+                if not quiet: print(self.message)
                 self.effect()
             self.fired = 1
             self.counter += 1
@@ -33,6 +33,7 @@ class RandomEvent:
         self.simState = simState
         self.activeEventList = []
         self.eventList = []
+        self.quiet = 0
         self.randomEvents = [
 
         [
@@ -116,7 +117,7 @@ class RandomEvent:
     def addEvents(self):
         for event in self.randomEvents:
             message, messageOver, eventLength, effect, inverseEffect = event
-            temp = Event(message, messageOver, eventLength, effect, inverseEffect)
+            temp = Event(message, messageOver, eventLength, effect, inverseEffect, self.quiet)
             self.eventList.append(temp)
 
     def rollRandomEvent(self):
@@ -133,6 +134,6 @@ class RandomEvent:
 
     def playEvents(self):
         for event in self.activeEventList:
-            if event.eventOver():
+            if event.eventOver(self.simState.getQuiet()):
                 if event in self.activeEventList: self.activeEventList.remove(event)
-            event.handleEvent()
+            event.handleEvent(self.simState.getQuiet())

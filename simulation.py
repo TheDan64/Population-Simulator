@@ -50,6 +50,7 @@ class SimulationState:
         # simFlag is a flag for avoiding random event rolls durning a call to nextGameState() -- 0 = real state 1 = simulation state
         self.simFlag = 0
         self.turn = 0
+        self.quiet = 0
         # productionFlatBuff, foodFlatBuff, productionRateBuff, foodRateBuff 
         self.statusEffects = [0,0,1,1]
         self.randomEvent = RandomEvent.RandomEvent(self)
@@ -174,3 +175,6 @@ class SimulationState:
     
     def getTurn(self):
         return self.turn
+
+    def getQuiet(self):
+        return self.quiet

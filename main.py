@@ -16,60 +16,82 @@ parser.add_argument("--height", type=int, default=5, help="Height of the simulat
 parser.add_argument("--population", type=int, default=10, help="Starting population of the town (default: 10)")
 parser.add_argument("--turns", type=int, default=25, help="Maximum number of turns (default: 25)")
 parser.add_argument("--heuristic", type=int, default=1, help="Which heuristic to use 1 - 3 (default: 1)")
+parser.add_argument("--quiet", type=int, default=0, help="Supress run output and run --turns times, outputting an average score over --turns runs")
+
 
 args = parser.parse_args()
 
 shared.heuristic = args.heuristic
 
-def printStatistics(simState):
+def printStatistics(population, food, income, total):
     print("""Town Statistics
     Population:  {}
     Food:        {}
     Income:      {}
     Total:       {}\
-""".format(len(simState.getPopulation()), simState.getFood(),
-    simState.getIncome(), simState.getFood() + len(simState.getPopulation()) +
-    simState.getIncome()))
+""".format(population, food, income, total))
 
 def main():
     # Generate a randomized starting simulation
-    simState = SimulationState(args.width, args.height, 100, args.population)
-    agent = ReflexAgent()
-    skipInputTurns = 0
+     
+    if args.quiet:
+        totalPop = 0
+        totalFood = 0
+        totalIncome = 0
+        totalScore = 0
 
-    # End when theres no moves left or population is dead
-    while simState.stillAlive() and simState.getTurn() <= args.turns:
-        if not skipInputTurns:
-            # Get player input if skipInputTurns == 0
-            inp = input("Press a command followed by enter: ")
-        
-            # If an integer, proceed for int # of terms
-            try:
-                skipInputTurns = int(inp)
-            except ValueError:
-                if inp == 'e':
-                    exit()
-                elif inp == 'p':
-                    printStatistics(simState)
+        shared.quiet = 0
+        for x in range(args.turns):
+            print("Running heuristic " + str(heuristic) + " on iteration " + str(x))
+            simState = SimulationState(args.width, args.height, 100, args.population)
+            simState.quiet = 1
+            agent = ReflexAgent()
+            while simState.stillAlive() and simState.getTurn() <= args.turns:
+                tile, improvement = agent.getAction(simState)
+                simState.update(tile, improvement)
+            totalPop += len(simState.getPopulation())
+            totalFood += simState.getFood()
+            totalIncome += simState.getIncome()
+            totalScore += simState.getFood() + len(simState.getPopulation()) + simState.getIncome()
+        printStatistics(totalPop/args.turns, totalFood/args.turns, totalIncome/args.turns, totalScore/args.turns)
+    else:
+        simState = SimulationState(args.width, args.height, 100, args.population)
+        agent = ReflexAgent()
+        skipInputTurns = 0
 
-        tile, improvement = agent.getAction(simState)
+        # End when theres no moves left or population is dead
+        while simState.stillAlive() and simState.getTurn() <= args.turns:
+            if not skipInputTurns:
+                # Get player input if skipInputTurns == 0
+                inp = input("Press a command followed by enter: ")
+            
+                # If an integer, proceed for int # of terms
+                try:
+                    skipInputTurns = int(inp)
+                except ValueError:
+                    if inp == 'e':
+                        exit()
+                    elif inp == 'p':
+                        printStatistics(len(simState.getPopulation()), simState.getFood(), simState.getIncome(), (simState.getFood() + len(simState.getPopulation()) + simState.getIncome()) ) 
 
-        if tile is None:
-            print("Turn {:3}: The Govenor does nothing this turn.".format(simState.getTurn()))
-        else:
-            text = "\033[92mFarm\033[0m"
+            tile, improvement = agent.getAction(simState)
 
-            if improvement.name == "Mine":
-                text = "\033[31;40mMine\033[0m"
+            if tile is None:
+                print("Turn {:3}: The Govenor does nothing this turn.".format(simState.getTurn()))
+            else:
+                text = "\033[92mFarm\033[0m"
 
-            print("Turn {:3}: The Govenor creates a new {} for the town.".format(simState.getTurn(), text))
+                if improvement.name == "Mine":
+                    text = "\033[31;40mMine\033[0m"
 
-        simState.update(tile, improvement)
+                print("Turn {:3}: The Govenor creates a new {} for the town.".format(simState.getTurn(), text))
 
-        if skipInputTurns > 0:
-            skipInputTurns -= 1
+            simState.update(tile, improvement)
 
-    printStatistics(simState)
+            if skipInputTurns > 0:
+                skipInputTurns -= 1
+
+        printStatistics(len(simState.getPopulation()), simState.getFood(), simState.getIncome(), (simState.getFood() + len(simState.getPopulation()) + simState.getIncome()))
 
 # Call main fn when running this script (as opposed to importing it)
 if __name__ == "__main__":
