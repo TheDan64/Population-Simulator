@@ -54,6 +54,7 @@ def main():
         f.write("stuff")
         for x in range(args.turns):
             f.write("Running heuristic " + str(heuristic) + " on iteration " + str(x) + "\n")
+            f.flush()
             simState = SimulationState(args.width, args.height, 100, args.population)
             simState.quiet = 1
             agent = ReflexAgent()
