@@ -18,8 +18,7 @@ parser.add_argument("--turns", type=int, default=25, help="Maximum number of tur
 parser.add_argument("--heuristic", type=int, default=1, help="Which heuristic to use 1 - 3 (default: 1)")
 parser.add_argument("--quiet", type=int, default=0, help="Supress run output and run --turns times, outputting an average score over --turns runs")
 parser.add_argument("--file", default="output", help="Output file name (defualt: 'output')")
-
-
+parser.add_argument("--iterations", type=int, default=1, help="Maximum number of iterations (default: 1)")
 
 args = parser.parse_args()
 
@@ -51,8 +50,8 @@ def main():
         totalScore = 0
 
         f = open(args.file, 'w+')
-        for x in range(args.turns+1):
-            f.write("Running heuristic " + str(heuristic) + " on iteration " + str(x) + "\n")
+        for x in range(args.iterations):
+            f.write("Running heuristic " + str(heuristic) + " on iteration " + str(x+1) + "\n")
             f.flush()
             simState = SimulationState(args.width, args.height, 100, args.population)
             simState.quiet = 1
@@ -64,7 +63,7 @@ def main():
             totalFood += simState.getFood()
             totalIncome += simState.getIncome()
             totalScore += simState.getFood() + len(simState.getPopulation()) + simState.getIncome()
-        printStatistics(totalPop/args.turns, totalFood/args.turns, totalIncome/args.turns, totalScore/args.turns, f)
+        printStatistics(totalPop/args.iterations, totalFood/args.iterations, totalIncome/args.iterations, totalScore/args.iterations, f)
         f.close()
     else:
         simState = SimulationState(args.width, args.height, 100, args.population)
