@@ -51,7 +51,6 @@ def main():
         totalScore = 0
 
         f = open(args.file, 'w+')
-        f.write("stuff")
         for x in range(args.turns):
             f.write("Running heuristic " + str(heuristic) + " on iteration " + str(x) + "\n")
             f.flush()
