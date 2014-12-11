@@ -5,6 +5,7 @@
 
 from shared import *
 import testsimulation
+import random
 
 # Remembers previous actions and results (including random events)
 class Memory:
@@ -99,10 +100,89 @@ class ReflexAgent:
 
         return bestTile, improvement
 
-class QLearningAgent(ReflexAgent):
-    def __init__(self):
-        pass
+class QLearningAgent:
+    def __init__(self, alpha, discount, epsilon):
+        self.qValues = Counter()
+        self.alpha = alpha
+        self.discount = discount
+        self.epsilon = epsilon
+
+    def generateImprovements(self, tile):
+        improvements = []
+
+        if tile.type == tileType.Both:
+            improvements = [tileState.Farm, tileState.Mine]
+        elif tile.type == tileType.Farmable:
+            improvements = [tileState.Farm]
+        elif tile.type == tileType.Mineable:
+            improvements = [tileState.Mine]
+
+        return improvements
+
+    def getQValue(self, state, action):
+        return self.qValues[(state, action)]
+
+    def getValue(self, simState): # Compute value from Q value
+        tiles = simState.getPossibleActions()
+
+        if not len(tiles):
+            return 0.0
+
+        value = -float("inf")
+
+        for tile in tiles:
+            improvements = self.generateImprovements(tile)
+
+            for i in improvements:
+                newValue = self.getQValue(tile.position, i)
+
+                if newValue > value:
+                    value = newValue
+
+        return value
+
+    def getPolicy(self, simState): # Compute action from Q Values
+        tiles = simState.getPossibleActions()
+
+        if not len(tiles):
+            return None, None
+
+        value, bestTile, bestImprovement = -float("inf"), None, None
+
+        for tile in tiles:
+            improvements = self.generateImprovements(tile)
+
+            for i in improvements:
+                newValue = self.getQValue(tile.position, i)
+
+                if newValue > value:
+                    value = newValue
+                    bestTile = tile
+                    bestImprovement = i
+
+        return bestTile, bestImprovement
+
 
     def getAction(self, simState):
-        ReflexAgent.getAction(simState)
+        tiles = simState.getPossibleActions()
+        action, tile = None, None
 
+        if not len(tiles):
+            return None, None
+
+        if random.random() < self.epsilon:
+            tile = random.choice(tiles)
+
+            if tile.type == tileType.Baren:
+                tile, action = None, None
+            else:
+                action = random.choice(self.generateImprovements(tile))
+        else:
+            tile, action = self.getPolicy(simState)
+
+        return tile, action
+
+    def update(self, state, action, nextState, reward):
+        newQValue = reward + self.discount * self.getValue(nextState)
+
+        self.qValues[(state, action)] = (1 - self.alpha) * self.getQValue(state, action) + self.alpha * newQValue
