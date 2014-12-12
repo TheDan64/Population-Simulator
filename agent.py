@@ -101,10 +101,16 @@ class ReflexAgent:
         return bestTile, improvement
 
 class QLearningAgent:
-    def __init__(self, alpha, discount, epsilon):
+    def __init__(self, alpha, epsilon, gamma):
         self.qValues = Counter()
         self.alpha = alpha
-        self.discount = discount
+        self.epsilon = epsilon
+        self.gamma = gamma
+
+    def updateAlpha(self, alpha):
+        self.alpha = alpha
+
+    def updateEpsilon(self, epsilon):
         self.epsilon = epsilon
 
     def generateImprovements(self, tile):
@@ -122,7 +128,7 @@ class QLearningAgent:
     def getQValue(self, state, action):
         return self.qValues[(state, action)]
 
-    def getValue(self, simState): # Compute value from Q value
+    def getValue(self, simState):
         tiles = simState.getPossibleActions()
 
         if not len(tiles):
@@ -135,13 +141,16 @@ class QLearningAgent:
 
             for i in improvements:
                 newValue = self.getQValue(tile.position, i)
-
+                
                 if newValue > value:
                     value = newValue
 
+        if value == -float("inf"):
+            return -100
+
         return value
 
-    def getPolicy(self, simState): # Compute action from Q Values
+    def getPolicy(self, simState):
         tiles = simState.getPossibleActions()
 
         if not len(tiles):
@@ -161,7 +170,6 @@ class QLearningAgent:
                     bestImprovement = i
 
         return bestTile, bestImprovement
-
 
     def getAction(self, simState):
         tiles = simState.getPossibleActions()
@@ -183,6 +191,6 @@ class QLearningAgent:
         return tile, action
 
     def update(self, state, action, nextState, reward):
-        newQValue = reward + self.discount * self.getValue(nextState)
+        newQValue = reward + self.gamma * self.getValue(nextState)
 
         self.qValues[(state, action)] = (1 - self.alpha) * self.getQValue(state, action) + self.alpha * newQValue

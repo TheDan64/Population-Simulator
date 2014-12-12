@@ -48,21 +48,15 @@ def main():
     totalFood = 0
     totalIncome = 0
     totalScore = 0
-    maxScore = 0
-    alpha = 0.25
-    discount = 1
-    epsilon = 0.9
+    maxScore = (0, 0, 0, 0)
+    alpha = 0.2
+    epsilon = 0.05
+    gamma = 0.8
 
-    agent = ReflexAgent() if not args.qlearning else QLearningAgent(alpha, discount, epsilon)
+    agent = ReflexAgent() if not args.qlearning else QLearningAgent(alpha, epsilon, gamma)
     output = open(args.file, "w+") if args.file is not None else None
 
     for x in range(args.iterations):
-        if args.qlearning:
-            if x == int(args.iterations / 3):
-                alpha = 0.5
-            elif x == int(args.iterations * 2 / 3):
-                alpha = 0.75
-
         skipInputTurns = 0
 
         if output:
@@ -70,11 +64,13 @@ def main():
             output.flush()
 
         simState = SimulationState(args.width, args.height, 100, args.population, args.quiet)
+
+        # Create a new agent only if Reflex
         agent = ReflexAgent() if not args.qlearning else agent
 
         # End when theres no moves left or population is dead
         while simState.stillAlive() and simState.getTurn() <= args.turns:
-            if not skipInputTurns and not args.quiet:
+            if not skipInputTurns and not args.quiet and 0:
                 # Get player input if skipInputTurns == 0
                 inp = input("Press a command followed by enter: ")
             
@@ -102,14 +98,19 @@ def main():
 
             simState.update(tile, improvement)
 
+            reward = 0
+
+            if len(simState.getPopulation()) > 0:
+                reward = len(simState.getPopulation()) + simState.getFood() + simState.getIncome()
+
             if args.qlearning:
-                agent.update(tile.position if tile else None, improvement, simState, len(simState.getPopulation())) # Needs some reward
+                agent.update(tile.position if tile else None, improvement, simState, reward)
 
             if skipInputTurns > 0:
                 skipInputTurns -= 1
 
-        if simState.getFood() + len(simState.getPopulation()) + simState.getIncome() > maxScore:
-            maxScore = simState.getFood() + len(simState.getPopulation()) + simState.getIncome()
+        if simState.getFood() + len(simState.getPopulation()) + simState.getIncome() > maxScore[3]:
+            maxScore = (len(simState.getPopulation()), simState.getFood(), simState.getIncome(), simState.getFood() + len(simState.getPopulation()) + simState.getIncome())
 
         totalPop += len(simState.getPopulation())
         totalFood += simState.getFood()
@@ -118,12 +119,14 @@ def main():
 
     printStatistics(totalPop/args.iterations, totalFood/args.iterations, totalIncome/args.iterations, output)
 
+    # QLearning Agent Learned Run
     if args.qlearning:
         simState = SimulationState(args.width, args.height, 100, args.population, args.quiet)
-#        agent.alpha = 0 # Not learning anymore
-#        print(agent.qValues)
         print("Finished running simulation with", args.iterations, "iterations of learning in memory")
-        print("Highest score:", maxScore)
+
+        # Not learning anymore:
+        agent.updateAlpha(0.0)
+        agent.updateEpsilon(0.0)
 
         while simState.stillAlive() and simState.getTurn() <= args.turns:
             if not skipInputTurns and not args.quiet:
@@ -153,10 +156,10 @@ def main():
 
             simState.update(tile, improvement)
 
-#            if args.qlearning:
-#                agent.update(tile.position, improvement, simState, simState.getCurrentScore()) # Needs some reward
+            if skipInputTurns > 0:
+                skipInputTurns -= 1
 
-        printStatistics(len(simState.getPopulation()), simState.getFood(), simState.getIncome(), None)
+        printStatistics(len(simState.getPopulation()), simState.getFood(), simState.getIncome(), output)
 
     if output:
         output.close()
