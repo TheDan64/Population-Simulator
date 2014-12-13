@@ -16,7 +16,7 @@ parser.add_argument("--height", type=int, default=5, help="Height of the simulat
 parser.add_argument("--population", type=int, default=10, help="Starting population of the town (default: 10)")
 parser.add_argument("--turns", type=int, default=25, help="Maximum number of turns (default: 25)")
 parser.add_argument("--heuristic", type=int, default=1, help="Which heuristic to use 1 - 3 (default: 1)")
-parser.add_argument("--quiet", action="store_true", help="Supress run output and run --turns times, outputting an average score over --turns runs")
+parser.add_argument("--quiet", action="store_true", help="Supress run output and run --iterations times, outputting an average score over all runs")
 parser.add_argument("--qlearning", action="store_true", help="Turns into a Q-Learning agent")
 parser.add_argument("--file", default=None, help="Output file name (default: None)")
 parser.add_argument("--iterations", type=int, default=1, help="Maximum number of iterations (default: 1)")
