@@ -143,15 +143,14 @@ class SimulationState:
         
         # The heuristic that conbines elements of the other two
         if shared.heuristic == 1:
-            return self.income / (len(self.population)*(self.getFoodHistory())) #Best?
+            return self.income / (len(self.population)*(self.getFoodHistory())) # Worst
 
         # Our 2nd idea heuristic
         elif shared.heuristic == 2:
             return self.income / len(self.population)
 
         # Our original heuristic
-        return self.income * .1 + len(self.population) * (self.getFoodHistory()) #Worst?
-
+        return self.income * .1 + len(self.population) * (self.getFoodHistory()) # Best
 
     def getIncome(self):
         return self.income
@@ -171,7 +170,6 @@ class SimulationState:
         if sum(self.foodHistory)/(len(self.foodHistory) + 1) == 0:
             return 1
         return sum(self.foodHistory)/(len(self.foodHistory) + 1)
-
     
     def getTurn(self):
         return self.turn

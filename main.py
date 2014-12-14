@@ -10,6 +10,7 @@ from agent import *
 from simulation import *
 import argparse
 
+# Command line arguments
 parser = argparse.ArgumentParser(description="A population simulation")
 parser.add_argument("--width", type=int, default=5, help="Width of the simulation grid (default: 5)")
 parser.add_argument("--height", type=int, default=5, help="Height of the simulation grid (default: 5)")
@@ -19,7 +20,8 @@ parser.add_argument("--heuristic", type=int, default=1, help="Which heuristic to
 parser.add_argument("--quiet", action="store_true", help="Supress run output and run --turns times, outputting an average score over --turns runs")
 parser.add_argument("--qlearning", action="store_true", help="Turns into a Q-Learning agent")
 parser.add_argument("--file", default=None, help="Output file name (default: None)")
-parser.add_argument("--iterations", type=int, default=1, help="Maximum number of iterations (default: 1)")
+parser.add_argument("--iterations", type=int, default=1, help="Maximum number of reflex runs or Q-learning learning runs (default: 1)")
+parser.add_argument("--qiterations", type=int, default=1, help="Maximum number of Q-learning learned runs (default: 1)")
 
 args = parser.parse_args()
 
@@ -56,6 +58,7 @@ def main():
     agent = ReflexAgent() if not args.qlearning else QLearningAgent(alpha, epsilon, gamma)
     output = open(args.file, "w+") if args.file is not None else None
 
+    # For averages and training Q-learning
     for x in range(args.iterations):
         skipInputTurns = 0
 
@@ -70,7 +73,7 @@ def main():
 
         # End when theres no moves left or population is dead
         while simState.stillAlive() and simState.getTurn() <= args.turns:
-            if not skipInputTurns and not args.quiet and 0:
+            if not skipInputTurns and not args.quiet:
                 # Get player input if skipInputTurns == 0
                 inp = input("Press a command followed by enter: ")
             
@@ -121,45 +124,68 @@ def main():
 
     # QLearning Agent Learned Run
     if args.qlearning:
-        simState = SimulationState(args.width, args.height, 100, args.population, args.quiet)
         print("Finished running simulation with", args.iterations, "iterations of learning in memory")
+
+        # Reset averages:
+        totalPop = 0
+        totalFood = 0
+        totalIncome = 0
+        totalScore = 0
+        maxScore = (0, 0, 0, 0)
 
         # Not learning anymore:
         agent.updateAlpha(0.0)
         agent.updateEpsilon(0.0)
 
-        while simState.stillAlive() and simState.getTurn() <= args.turns:
-            if not skipInputTurns and not args.quiet:
-                # Get player input if skipInputTurns == 0
-                inp = input("Press a command followed by enter: ")
-            
-                # If an integer, proceed for int # of terms
-                try:
-                    skipInputTurns = int(inp)
-                except ValueError:
-                    if inp == 'e':
-                        exit()
-                    elif inp == 'p':
-                        printStatistics(len(simState.getPopulation()), simState.getFood(), simState.getIncome(), output)
+        print("Running", args.qiterations, "Q-Learning learned runs")
 
-            tile, improvement = agent.getAction(simState)
+        # For finding the averages of the q-learning learned runs
+        for x in range(args.qiterations):
+            simState = SimulationState(args.width, args.height, 100, args.population, args.quiet)
 
-            if tile is None:
-                print("Turn {:2}: The Govenor does nothing this turn.".format(simState.getTurn()))
-            else:
-                text = "\033[92mFarm\033[0m"
+            while simState.stillAlive() and simState.getTurn() <= args.turns:
+                if not skipInputTurns and not args.quiet:
+                    # Get player input if skipInputTurns == 0
+                    inp = input("Press a command followed by enter: ")
+                
+                    # If an integer, proceed for int # of terms
+                    try:
+                        skipInputTurns = int(inp)
+                    except ValueError:
+                        if inp == 'e':
+                            exit()
+                        elif inp == 'p':
+                            printStatistics(len(simState.getPopulation()), simState.getFood(), simState.getIncome(), output)
 
-                if improvement.name == "Mine":
-                    text = "\033[31;40mMine\033[0m"
+                tile, improvement = agent.getAction(simState)
 
-                print("Turn {:2}: The Govenor creates a new {} for the town.".format(simState.getTurn(), text))
+                if not args.quiet:
+                    if tile is None:
+                        print("Turn {:2}: The Govenor does nothing this turn.".format(simState.getTurn()))
+                    else:
+                        text = "\033[92mFarm\033[0m"
 
-            simState.update(tile, improvement)
+                        if improvement.name == "Mine":
+                            text = "\033[31;40mMine\033[0m"
 
-            if skipInputTurns > 0:
-                skipInputTurns -= 1
+                        print("Turn {:2}: The Govenor creates a new {} for the town.".format(simState.getTurn(), text))
 
-        printStatistics(len(simState.getPopulation()), simState.getFood(), simState.getIncome(), output)
+                simState.update(tile, improvement)
+
+                if skipInputTurns > 0:
+                    skipInputTurns -= 1
+
+            # Find the largest score
+            if simState.getFood() + len(simState.getPopulation()) + simState.getIncome() > maxScore[3]:
+                maxScore = (len(simState.getPopulation()), simState.getFood(), simState.getIncome(), simState.getFood() + len(simState.getPopulation()) + simState.getIncome())
+
+            # Find the averages
+            totalPop += len(simState.getPopulation())
+            totalFood += simState.getFood()
+            totalIncome += simState.getIncome()
+            totalScore += simState.getFood() + len(simState.getPopulation()) + simState.getIncome()
+
+        printStatistics(totalPop/args.qiterations, totalFood/args.qiterations, totalIncome/args.qiterations, output)
 
     if output:
         output.close()

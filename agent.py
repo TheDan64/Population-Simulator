@@ -190,6 +190,7 @@ class QLearningAgent:
 
         return tile, action
 
+    # Standard Q-value update fn
     def update(self, state, action, nextState, reward):
         newQValue = reward + self.gamma * self.getValue(nextState)
 
