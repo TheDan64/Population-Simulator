@@ -91,29 +91,6 @@ class RandomEvent:
             choice.state = None
             choice.type = destState
 
-    def rateChange(self, tileType, rate):
-        # tileType = shared.tileState.Farm or shared.tileState.Mine
-
-        tileList = []
-        for pos, iterTile in self.simState.land.items(): 
-            if iterTile.state is tileType:
-                tileList.append(iterTile)
-        if tileList:
-            choice = random.choice(tileList).tile 
-            choice.productionRate *= rate
-            choice.productionRate  = math.fabs(choice.productionRate)
-
-    def killPeople(self, numberToKill):
-        for x in range(numberToKill):
-            self.simState.population.remove(random.choice(self.simState.population))
-
-    def birthPeople(self, numberToBirth):
-        for x in range(numberToBirth):
-             self.simState.population.append(simulation.Person())
-
-    def resetFoodHistory(self):
-        self.simState.foodHistory = []
-
     def addEvents(self):
         for event in self.randomEvents:
             message, messageOver, eventLength, effect, inverseEffect = event
